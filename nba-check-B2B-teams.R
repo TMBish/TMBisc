@@ -54,6 +54,30 @@ get_b2b_teams = function(.schedDF, .date = today()) {
 
 }
 
+order_teams_by_game_number = function(.schedDF) {
+
+    schedUDF =
+        .schedDF %>%
+        select(date, team = home, opp = away) %>%
+        union_all(
+            .schedDF %>%
+                select(date, team = away, opp = home)
+        )
+
+
+    td = today()-days(1)
+    end_of_week = td + days(8 - wday(td))
+
+    schedUDF %>%
+        filter(
+            date >= .date, date <= end_of_week
+        ) %>%
+        group_by(team) %>%
+        summarise(games= n()) %>%
+        arrange(desc(games))
+
+}
+
 
 # Execution ---------------------------------------------------------------
 
@@ -77,3 +101,6 @@ schedDF =
 get_b2b_teams(schedDF)
 get_b2b_teams(schedDF, .date = today() + days(1))
 get_b2b_teams(schedDF, .date = today() + days(2))
+
+# Team games this week
+order_teams_by_game_number(schedDF)
