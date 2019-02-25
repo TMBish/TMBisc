@@ -70,7 +70,7 @@ order_teams_by_game_number = function(.schedDF) {
 
     schedUDF %>%
         filter(
-            date >= .date, date <= end_of_week
+            date >= td, date <= end_of_week
         ) %>%
         group_by(team) %>%
         summarise(games= n()) %>%
