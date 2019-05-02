@@ -54,7 +54,7 @@ get_b2b_teams = function(.schedDF, .date = today()) {
 
 }
 
-order_teams_by_game_number = function(.schedDF) {
+order_teams_by_game_number = function(.schedDF, .start_date = today(), .end_date = today() + days(7)) {
 
     schedUDF =
         .schedDF %>%
@@ -64,13 +64,9 @@ order_teams_by_game_number = function(.schedDF) {
                 select(date, team = away, opp = home)
         )
 
-
-    td = today()-days(1)
-    end_of_week = td + days(8 - wday(td))
-
     schedUDF %>%
         filter(
-            date >= td, date <= end_of_week
+            date >= .start_date, date <= .end_date
         ) %>%
         group_by(team) %>%
         summarise(games= n()) %>%
@@ -98,9 +94,9 @@ schedDF =
     )
 
 # Get Back 2 Back Teams
-get_b2b_teams(schedDF)
+get_b2b_teams(schedDF, .date = today() - days(1))
 get_b2b_teams(schedDF, .date = today() + days(1))
 get_b2b_teams(schedDF, .date = today() + days(2))
 
 # Team games this week
-order_teams_by_game_number(schedDF)
+order_teams_by_game_number(schedDF, .start_date = today() - days(1), .end_date = as_date("2019-03-10"))
