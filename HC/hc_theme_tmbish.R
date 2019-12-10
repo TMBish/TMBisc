@@ -4,7 +4,8 @@ hc_theme_tmbish = function() {
   # base_font = "Josefin Slab"
   header_font = "Arvo"
   
-  header_style = list(fontFamily = header_font, fontWeight = "bold", color = "#011627")
+  # Headers
+  axis_title_style = list(fontFamily = header_font, fontWeight = "bold", color = "#011627")
   
   gridLineCol = "rgba(122, 122, 122, 0.25)"
   
@@ -15,18 +16,18 @@ hc_theme_tmbish = function() {
         style = list(
           fontFamily = base_font
         )
-        # shadow = TRUE
+        #, shadow = TRUE
       ),
-      colors = list("#FF9F1C", "#2EC4B6", "#FE5F55", "#C1E1F1", "#5FEF9B"),
+      colors = list("#FF9F1C", "#2EC4B6", "#FE5F55", "#C1E1F1", "#5FEF9B", "#4C6085", "#824F95"),
       title = list(
-        style = header_style,
+        style = list(fontFamily = header_font, fontWeight = "bold", color = "#011627", fontSize = "2em"),
         align = "left"
       ),
       xAxis = list(
         lineWidth = 1, lineColor = "#011627",
         gridLineWidth = 0.75, gridLineColor = gridLineCol, gridLineDashStyle = "LongDash",
         tickWidth = 0,
-        title = list(style = header_style)
+        title = list(style = axis_title_style)
       ),
       yAxis = list(
         lineWidth = 1, lineColor = "#011627",
@@ -35,10 +36,10 @@ hc_theme_tmbish = function() {
         # tickColor = "#011627",tickLength = 10,
         # minorTickLength = 5, minorTickWidth = 1,
         tickWidth = 0,
-        title = list(style = header_style)
+        title = list(style = axis_title_style)
       ),
       subtitle = list(
-        style = list(fontStyle = "italic", color ="#414141"), 
+        style = list(fontStyle = "italic", color ="#414141", size = "1.3em"), 
         align = "left"
       ),
       tooltip = list(

@@ -9,7 +9,7 @@ library(furrr)
 # ______________
 
 # Highcharts Theme
-source("https://raw.githubusercontent.com/TMBish/lab_posts/master/00_utilities/highcharts-theme.R")
+source("https://raw.githubusercontent.com/TMBish/TMBisc/master/HC/hc_theme_tmbish.R")
 
 # Getting Data
 # ______________
@@ -56,7 +56,7 @@ threes %>%
     fg3a = sum(fg3a)
   ) %>%
   hchart("column", hcaes(x = slugSeason, y = fg3a)) %>%
-  hc_add_theme(high_tmbish()) %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
   hc_xAxis(title = list(text = "")) %>%
   hc_yAxis(title = list(text = "Total 3PT FG Attempts")) %>%
   hc_title(text = "Stretch Bigs") %>%
@@ -77,7 +77,7 @@ threes %>%
     fg3pct = fg3m / fg3a
   ) %>%
   hchart("line", hcaes(x = slugSeason, y = fg3pct)) %>%
-  hc_add_theme(high_tmbish()) %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
   hc_xAxis(title = list(text = "")) %>%
   hc_yAxis(title = list(text = "3PT%")) %>%
   hc_title(text = "Stretch Bigs") %>%
@@ -95,7 +95,7 @@ threes %>%
     attempt_3_38_pct = sum(ifelse(fg3a_game >= 3 & fg3pct >= 0.38, 1, 0))
   ) %>%
   hchart("column", hcaes(x = slugSeason, y = attempt_3_38_pct)) %>%
-  hc_add_theme(high_tmbish()) %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
   hc_xAxis(title = list(text = "")) %>%
   hc_yAxis(title = list(text = "Players >= 3 3PT FGA + >= 38% 3PT%")) %>%
   hc_title(text = "Stretch Bigs") %>%
