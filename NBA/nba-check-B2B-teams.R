@@ -81,22 +81,23 @@ order_teams_by_game_number = function(.schedDF, .start_date = today(), .end_date
 month_0 = today() %>% month(label = TRUE, abbr = FALSE) %>% str_to_lower()
 month_1 = (today() + months(1)) %>% month(label = TRUE, abbr = FALSE) %>% str_to_lower()
 
-year_0 = today() %>% year()
-year_1 = (today() + months(1)) %>% year()
+year_0 = (today() %>% year())+1
+year_1 = ((today() + months(1)) %>% year())+1
 
 schedDF =
     pmap_dfr(
         .l = list(
             month = c(month_0, month_1),
-            year = c(year_0, year_1)
+            year = c(year_0, year_0)
         ),
         .f = function(month, year) {get_fixture_bball_ref(month, year)}
     )
 
 # Get Back 2 Back Teams
 get_b2b_teams(schedDF, .date = today() - days(1))
+get_b2b_teams(schedDF, .date = today())
 get_b2b_teams(schedDF, .date = today() + days(1))
 get_b2b_teams(schedDF, .date = today() + days(2))
 
 # Team games this week
-order_teams_by_game_number(schedDF, .start_date = today() - days(1), .end_date = as_date("2019-03-10"))
+order_teams_by_game_number(schedDF, .start_date = today() - days(1), .end_date = as_date("2019-12-08"))
