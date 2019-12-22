@@ -4,3 +4,5 @@
 .Ruserdata
 *.rds
 *.csv
+*.json
+data/hoops-only-log-v1.json

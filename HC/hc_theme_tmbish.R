@@ -18,7 +18,7 @@ hc_theme_tmbish = function() {
         )
         #, shadow = TRUE
       ),
-      colors = list("#FF9F1C", "#2EC4B6", "#FE5F55", "#C1E1F1", "#5FEF9B", "#4C6085", "#824F95"),
+      colors = list("#FF9F1C", "#2EC4B6", "#FE5F55", "#C1E1F1", "#5FEF9B", "#4C6085", "#824F95", "#1789FC", "#FFE066", "#50514F"),
       title = list(
         style = list(fontFamily = header_font, fontWeight = "bold", color = "#011627", fontSize = "2em"),
         align = "left"
@@ -64,7 +64,8 @@ hc_theme_tmbish = function() {
       plotOptions = list(
         line = list(marker = list(symbol = "circle", lineWidth = 2, radius = 5)),
         spline = list(marker = list(symbol = "circle", lineWidth = 2, radius = 5)),
-        column = list(dataLabels = list(backgroundColor = "#FFF"), borderRadius = 3, borderWidth = 0)
+        column = list(dataLabels = list(backgroundColor = "#FFF"), borderRadius = 3, borderWidth = 0),
+        area = list(fillOpacity = 0.2)
       ),
       legend = list(
         align = "right",
