@@ -16,13 +16,13 @@ source("https://raw.githubusercontent.com/TMBish/TMBisc/master/HC/hc_theme_tmbis
 #json = jsonlite::read_json("data/hoops-only-log-v1.json")
 
 json = jsonlite::read_json("data/corona-only-20200316.json")
-
-  list.files("data/hoops-only-20191112/", full.names = TRUE) %>%
-  map(~read_json(.))
-
   
-  
-df = list.files("data/threads-20200323/", full.names=TRUE) %>%
+#df = list.files("data/threads-20200323/", full.names=TRUE) %>%
+    
+thread = "data/threads-20200323/"
+thread = "data/threads-20200404/"
+
+df = list.files(thread, full.names=TRUE) %>%
   map_dfr(function(t) {
     read_json(t) %>%
       pluck(., "messages") %>%
@@ -49,7 +49,7 @@ df = list.files("data/threads-20200323/", full.names=TRUE) %>%
       mutate(
         thread = 
           t %>%
-          str_remove("data/threads-20200323/") %>%
+          str_remove(thread) %>%
           str_remove("_\\d{1}.json$") %>%
           str_replace_all("-", " ")
       )
@@ -106,3 +106,24 @@ df %>%
   hc_xAxis(title = list(text = "")) %>%
   hc_plotOptions(column = list(dataLabels = list(enabled = TRUE),  borderRadius = 0)) %>%
   hc_add_theme(hc_theme_tmbish())
+
+
+
+# Cumulative
+df %>%
+  select(thread, date) %>% mutate(message = 1) %>%
+  complete(thread, date) %>%
+  group_by(thread, date) %>%
+  summarise(messages = sum(message, na.rm = TRUE)) %>%
+  ungroup() %>%
+  group_by(thread) %>%
+  mutate(messages = cumsum(messages)) %>%
+  filter(date > "2019-01-01") %>%
+  hchart("line", hcaes(x = date, y = messages, group = thread)) %>%
+  hc_title(text = "FB Message Threads") %>%
+  hc_yAxis(title = list(text = "Cumulative Messages")) %>%
+  hc_xAxis(title = list(text = "")) %>%
+  hc_add_theme(hc_theme_tmbish())
+
+
+
