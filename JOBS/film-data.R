@@ -1,5 +1,7 @@
 library(tidyverse)
 library(yaml)
+library(utf8)
+library(textclean)
 
 # taml tidyer
 tidy_film_yaml = function(yaml) {
@@ -25,8 +27,18 @@ film_df =
   map_dfr(~{
     yaml.load_file(.) %>%
       tidy_film_yaml() %>%
-      mutate(title = unlist(title))
+      mutate(title = unlist(title), pick_of_the_week = unlist(pick_of_the_week) %>% as.logical())
   })
+
+# Correct Weird encoding
+film_df = 
+  film_df %>%
+  mutate(
+    review_text = 
+      review_text %>% 
+      replace_curly_quote() %>%
+      replace_non_ascii()
+  )
 
 # Write to google drive
 film_df %>%
