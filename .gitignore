@@ -5,4 +5,5 @@
 *.rds
 *.csv
 *.json
+*.log
 data/hoops-only-log-v1.json
