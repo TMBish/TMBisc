@@ -1,10 +1,12 @@
+library(tidyverse)
 library(yaml)
 
 
 # Ratings
 ratings = 
-  read_csv("D:/github/TMBisc/FILMS/ratings.csv") %>%
-  select(-rewatch_needed)
+  read_csv("D:/github/TMBisc/FILMS/ratings-20200706.csv") %>%
+  select(-rewatch_needed) %>%
+  mutate(year = as.integer(year))
 
 
 # DF lister

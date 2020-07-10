@@ -1,12 +1,10 @@
 hc_theme_tmbish = function() {
   
   base_font = "Lato"
-  # base_font = "Josefin Slab"
   header_font = "Arvo"
   
   # Headers
   axis_title_style = list(fontFamily = header_font, fontWeight = "bold", color = "#011627")
-  
   gridLineCol = "rgba(122, 122, 122, 0.25)"
   
   out = 
@@ -16,7 +14,6 @@ hc_theme_tmbish = function() {
         style = list(
           fontFamily = base_font
         )
-        #, shadow = TRUE
       ),
       colors = list("#1789FC", "#2EC4B6", "#FE5F55", "#FF9F1C", "#C1E1F1", "#5FEF9B", "#4C6085", "#824F95", "#FFE066", "#50514F"),
       title = list(
@@ -48,18 +45,6 @@ hc_theme_tmbish = function() {
         backgroundColor = "#FFF",
         valueDecimals = 2,
         headerFormat = ""
-        # footerFormat = "<span style = 'background-color: {point.color}; height = 4px; width = 100%;'> </span>"
-        # formatter = JS("function() {
-        #                series = this.series.name;
-        #                x_var = this.series.x;
-        #                x_val = this.x;
-        #                y_var = this.y;
-        #                y_val = this.y
-        #                colour = this.y;
-        #                
-        #                string = '<b>' + series + '</b> <br> ' + this.series.xAxis.categories ;
-        #                return(string) 
-        #                }")
       ),
       plotOptions = list(
         line = list(marker = list(symbol = "circle", lineWidth = 2, radius = 5)),
