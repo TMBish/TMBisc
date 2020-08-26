@@ -1,0 +1,128 @@
+---
+title: "NBA Highcharter Help"
+author: "Nikhil Morar"
+date: '`r Sys.Date()`'
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r Run Packages, setup, include=FALSE}
+library(highcharter)
+library(tidyverse)
+library(ggplot2)
+library(nbastatR)
+library(forecast)
+library(lubridate)
+library(glue)
+library(shiny)
+library(hexbin)
+library(dplyr)
+library(httr)
+library(jsonlite)
+# library(ggimage)
+# 
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+# Some tibble options
+options(
+  tibble.width = Inf, 
+  pillar.sigfig = 4,
+  pillar.bold = TRUE
+)
+```
+
+### Getting The Data
+
+We'll use the gamelogs (boxscores) from the most recent complete NBA season 2019-20:
+
+```{r Import Data, warning=FALSE, message=FALSE, echo = FALSE, class.source="language-r"}
+gamelogs = nbastatR::game_logs(seasons = 2020)
+```
+
+## Scatterplot
+
+```{r Team Free Throws}
+black = "#000000"
+
+FTdata = 
+  gamelogs %>%
+  group_by(nameTeam, urlTeamSeasonLogo) %>%
+  summarise(
+    ftaPerGame = sum(fta) / n_distinct(idGame),
+    ftPct = sum(ftm) / sum(fta)
+  ) 
+
+FTlist = 
+  FTdata %>%
+  select(pointTitle = nameTeam, x = ftaPerGame, y = ftPct, urlTeamSeasonLogo) %>%
+  pmap(
+   function(pointTitle, x,y,urlTeamSeasonLogo) {
+     list(
+       x = x,
+       y = y,
+       pointTitle = pointTitle,
+       marker = list(symbol = glue("url({urlTeamSeasonLogo})"), height = 50, width = 50)
+     ) 
+   }
+  ) %>%
+  list(
+    name = "Free Throw Stats",
+    data = .
+  ) %>%
+  list()
+
+
+highchart() %>%
+  hc_chart(type = "scatter") %>%
+  hc_add_series_list(FTlist) %>%
+  # hchart("scatter", hcaes(x = ftaPerGame, y = ftPct), color = black, name = "Free Throw Stats") %>%
+  hc_xAxis(
+    title = list(text = "Free Throws Per Game", style = list(fontSize = "1.5em", color =  "#000000")), # Large bolded titles
+    gridLineWidth = 0.5, gridLineColor = black, gridLineDashStyle = "longdash", # Light blue long dashed gridlines
+    labels = list(style = list(color =  black)),
+    tickWidth = 0,
+    lineWidth = 0 # No Axis Line
+  ) %>%
+  hc_yAxis(
+    title = list(text = "FT Pct", style = list(fontSize = "1.5em", color =  "#000000")), # Large bolded titles
+    gridLineWidth = 0.5, gridLineColor = black, gridLineDashStyle = "longdash",  # Light blue long dashed gridlines
+    labels = list(style = list(color =  black)),
+    lineWidth = 0 # No Axis Line
+  ) %>%
+  hc_yAxis(
+    labels = list(
+      formatter = JS(
+        "function(){
+          byHundred = Math.round(this.value * 100)
+          return(byHundred + '%') 
+        }"
+      )
+    )
+  ) %>%
+  hc_title(
+    text = "19-20 Team Free Throws",
+    style = list(fontSize = "24px", color = "#000000", fontWeight = "bold")
+  ) %>%
+  hc_subtitle(
+    text = "Free Throw Attempts Per Game vs FT PCT",
+    style = list(fontSize = "12px", color = "#000000", fontStyle = "italic")
+  ) %>%
+  hc_chart(
+    marginTop = 75
+  ) %>%
+  hc_tooltip(
+    useHTML = TRUE,                              # The output should be understood to be html markup
+    formatter = JS(
+      "
+      function(){
+        outHTML = '<b>' + this.point.pointTitle + '</b> <br> Free Throws Per Game ' + Math.round(this.x) + '<br> Free Throw Pct ' + Math.round(this.y*100) + '%'
+        return(outHTML)
+      }
+      "
+    ),
+    shape = "square", # Options are square, circle and callout
+    borderWidth = 0   # No border on the tooltip shape
+  ) 
+# marker = list(symbol = ("url({urlTeamSeasonlogol})"), height = 5, width = 5)
+```
+
