@@ -34,7 +34,20 @@ gameLevel =
 gameLevel %>%
   hchart("scatter", hcaes(y = pctFG3), name = "Overall 3PT%", opacity = 0.1, showInLegend = TRUE) %>%
   hc_add_series(gameLevel, "line", hcaes(y = pctFG3_roll10), name = "Rolling 10 Game", showInLegend = TRUE) %>%
-  hc_add_theme(high_tmbish())
+  hc_add_theme(hc_theme_tmbish())
+
+
+regSeason %>%
+  filter(slugSeason == "2019-20") %>%
+  group_by(dateGame, idGame, slugTeam) %>%
+  summarise(
+    makes_3pt = sum(fg3m),
+    attempts_3pt = sum(fg3a),
+    pct_3pt = sum(fg3m) /  sum(fg3a)
+  ) %>%
+  ungroup() %>%
+  filter(attempts_3pt >= 30) %>%
+  arrange(desc(pct_3pt))
 
 
 # Playoffs vs Regular Season
