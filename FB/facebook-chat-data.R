@@ -122,7 +122,7 @@ reactionList =
   arrange(desc(reaction_per_post)) %>%
   mutate(
     x = row_number()-1,
-    y = reaction_per_post
+    y = reaction_per_post + 5
   ) %>%
   select(x = x, y = y, sender) %>%
   pmap(
@@ -130,7 +130,13 @@ reactionList =
       list(
         x = x,
         y = y,
-        marker = list(symbol = glue("data/fbThumbs/{sender}.png"), height = 40, width = 55)
+        marker = list(
+          symbol = glue("url(https://raw.githubusercontent.com/TMBish/TMBisc/master/data/fbThumbs/{sender}.png?raw=true)") %>% URLencode()
+          # https://raw.githubusercontent.com/TMBish/TMBisc/master/data/fbThumbs/Calham%20James.png
+          , height = 60, width = 50
+        )
+        
+        # marker = list(symbol = glue("data/fbThumbs/{sender}.png"), height = 40, width = 55)
       ) 
     }
   ) %>%
