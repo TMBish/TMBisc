@@ -10,7 +10,7 @@ hc_theme_tmbish = function() {
   out = 
     hc_theme(
       chart = list(
-        backgroundColor = "#FDFFFC",
+        backgroundColor = "#FFF",
         style = list(
           fontFamily = base_font
         )

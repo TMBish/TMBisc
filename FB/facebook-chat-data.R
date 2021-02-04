@@ -133,7 +133,7 @@ reactionList =
         marker = list(
           symbol = glue("url(https://raw.githubusercontent.com/TMBish/TMBisc/master/data/fbThumbs/{sender}.png?raw=true)") %>% URLencode()
           # https://raw.githubusercontent.com/TMBish/TMBisc/master/data/fbThumbs/Calham%20James.png
-          , height = 60, width = 50
+          , height = 60, width = 60
         )
         
         # marker = list(symbol = glue("data/fbThumbs/{sender}.png"), height = 40, width = 55)
@@ -165,7 +165,10 @@ df %>%
   hc_plotOptions(
     column = list(dataLabels = list(enabled = TRUE)),
     line = list(lineWidth = 0)
-  )
+  ) %>%
+  hc_plotOptions(column = list(dataLabels = list(enabled = TRUE))) %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
+  hc_yAxis(title = list(text = "Reactions Per 100 Posts"))
 
 
 %>%
