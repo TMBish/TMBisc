@@ -10,12 +10,12 @@ hc_theme_tmbish = function() {
   out = 
     hc_theme(
       chart = list(
-        backgroundColor = "#FDFFFC",
+        backgroundColor = "#FFF",
         style = list(
           fontFamily = base_font
         )
       ),
-      colors = list("#1789FC", "#2EC4B6", "#FE5F55", "#FF9F1C", "#C1E1F1", "#5FEF9B", "#4C6085", "#824F95", "#FFE066", "#50514F"),
+      colors = list("#090809","#1789FC", "#2EC4B6", "#FE5F55", "#FF9F1C", "#C1E1F1", "#5FEF9B", "#4C6085", "#824F95", "#FFE066", "#50514F"),
       title = list(
         style = list(fontFamily = header_font, fontWeight = "bold", color = "#011627", fontSize = "2em"),
         align = "left"
@@ -43,13 +43,12 @@ hc_theme_tmbish = function() {
         shape = "square",
         valueDecimals = 2,
         backgroundColor = "#FFF",
-        valueDecimals = 2,
-        headerFormat = ""
+        valueDecimals = 2
       ),
       plotOptions = list(
         line = list(marker = list(symbol = "circle", lineWidth = 2, radius = 5)),
         spline = list(marker = list(symbol = "circle", lineWidth = 2, radius = 5)),
-        column = list(dataLabels = list(backgroundColor = "#FFF"), borderRadius = 3, borderWidth = 0),
+        column = list(dataLabels = list(backgroundColor = "#FFF"), borderRadius = 2, borderWidth = 0),
         area = list(fillOpacity = 0.2)
       ),
       legend = list(

@@ -3,6 +3,7 @@ library(jsonlite)
 library(anytime)
 library(lubridate)
 library(highcharter)
+library(glue)
 
 # Some Extra Stuff
 # ______________
@@ -16,7 +17,7 @@ source("https://raw.githubusercontent.com/TMBish/TMBisc/master/HC/hc_theme_tmbis
 #json = jsonlite::read_json("data/hoops-only-log-v1.json")
 
 json = 
-  list.files("data/hoops-only-20191112/", full.names = TRUE) %>%
+  list.files("data/hoops-only-20201126/", full.names = TRUE) %>%
   map(~read_json(.))
 
 
@@ -55,6 +56,135 @@ df =
 
 # Graphs
 # ____________________
+
+
+df %>%
+  group_by(date) %>%
+  summarise(
+    messages = n()
+  ) %>%
+  arrange(date) %>%
+  mutate(
+    messages_cum = cumsum(messages)
+  ) %>%
+  hchart("area", hcaes(x = date, y = messages_cum), color = "#C9082A") %>%
+  hc_title(text = "Hoops Only") %>%
+  hc_yAxis(title = list(text = "Cumulative Messages")) %>%
+  hc_add_theme(hc_theme_tmbish())
+
+df %>%
+  group_by(date, sender) %>%
+  summarise(messages = n()) %>%
+  ungroup() %>%
+  group_by(sender) %>%
+  mutate(cumulative_posts = cumsum(messages)) %>%
+  hchart("line", hcaes(x = date, y = cumulative_posts, group = sender)) %>%
+  hc_title(text = "Hoops Only") %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
+  hc_yAxis(title = list(text = "Cumulative Messages"))
+
+
+df %>%
+  group_by(sender) %>%
+  summarise(
+    messages = n(),
+    min_date = min(date)
+  ) %>%
+  mutate(
+    days = as.numeric(today()-min_date) + 1
+  ) %>%
+  mutate(
+    messages_per_day = round(messages / days, 1)
+  ) %>%
+  arrange(desc(messages_per_day)) %>%
+  hchart("column", hcaes(x = sender, y = messages_per_day),color = "#C9082A") %>%
+  hc_plotOptions(column = list(dataLabels = list(enabled = TRUE))) %>%
+  hc_title(text = "Hoops Only") %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
+  hc_yAxis(title = list(text = "Messages Per Day"))
+
+
+
+
+# Reactions ----------------------------------------------------------------
+
+reactionList = 
+  df %>%
+  filter(date >= "2019-09-01") %>%
+  group_by(sender) %>%
+  summarise(
+    posts = n(),
+    reactions = sum(reactions, na.rm = TRUE)
+  ) %>%
+  mutate(
+    reaction_per_post = round((reactions / posts) * 100)
+  )  %>%
+  arrange(desc(reaction_per_post)) %>%
+  mutate(
+    x = row_number()-1,
+    y = reaction_per_post + 5
+  ) %>%
+  select(x = x, y = y, sender) %>%
+  pmap(
+    function(x, y, sender) {
+      list(
+        x = x,
+        y = y,
+        marker = list(
+          symbol = glue("url(https://raw.githubusercontent.com/TMBish/TMBisc/master/data/fbThumbs/{sender}.png?raw=true)") %>% URLencode()
+          # https://raw.githubusercontent.com/TMBish/TMBisc/master/data/fbThumbs/Calham%20James.png
+          , height = 60, width = 60
+        )
+        
+        # marker = list(symbol = glue("data/fbThumbs/{sender}.png"), height = 40, width = 55)
+      ) 
+    }
+  ) %>%
+  list(
+    name = "Reactions Per 100 Posts",
+    data = .
+  ) %>%
+  list()
+
+
+
+df %>%
+  filter(date >= "2019-09-01") %>%
+  group_by(sender) %>%
+  summarise(
+    posts = n(),
+    reactions = sum(reactions, na.rm = TRUE)
+  ) %>%
+  mutate(
+    reaction_per_post = round((reactions / posts) * 100)
+  )  %>%
+  arrange(desc(reaction_per_post)) %>%
+  hchart("column", hcaes(x = sender, y = reaction_per_post), color = "#C9082A") %>%
+  hc_title(text = "Hoops Only") %>%
+  hc_add_series_list(reactionList) %>%
+  hc_plotOptions(
+    column = list(dataLabels = list(enabled = TRUE)),
+    line = list(lineWidth = 0)
+  ) %>%
+  hc_plotOptions(column = list(dataLabels = list(enabled = TRUE))) %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
+  hc_yAxis(title = list(text = "Reactions Per 100 Posts"))
+
+
+%>%
+  arrange(desc(reaction_per_post)) %>%
+  hchart("column", hcaes(x = sender, y = reaction_per_post), color = "#C9082A") %>%
+  hc_title(text = "Hoops Only") %>%
+  hc_plotOptions(column = list(dataLabels = list(enabled = TRUE))) %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
+  hc_yAxis(title = list(text = "Reactions Per 100 Posts"))
+
+
+
+
+# Other Stuff -------------------------------------------------------------
+
+
 
 df %>%
   group_by(sender) %>%
