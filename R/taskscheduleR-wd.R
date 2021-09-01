@@ -13,7 +13,9 @@ taskscheduler_find_wd = function(parent_dir = NULL) {
         dir = filePath %>% str_extract(str_c(".+", parent_dir))
     }
         
-    setwd(dir)
-    library(here)
-    
+    if (length(dir)>0) {
+        setwd(dir)
+        library(here)
+    }
+
 }
