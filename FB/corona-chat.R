@@ -3,6 +3,7 @@ library(jsonlite)
 library(anytime)
 library(lubridate)
 library(highcharter)
+library(COVID19)
 
 # Some Extra Stuff
 # ______________
@@ -10,21 +11,17 @@ library(highcharter)
 # Highcharts Theme
 source("https://raw.githubusercontent.com/TMBish/TMBisc/master/HC/hc_theme_tmbish.R")
 
-# Hoops Only Chat Data
+# COVID Case Data
 # ____________________
 
-#json = jsonlite::read_json("data/hoops-only-log-v1.json")
+covid = COVID19::covid19(country = "AUS", verbose = FALSE) %>% as_tibble()     
 
-json = jsonlite::read_json("data/corona-only-20200316.json")
-
-  list.files("data/hoops-only-20191112/", full.names = TRUE) %>%
-  map(~read_json(.))
-
-
-# Data Frame
+# Chat Data
 # ____________________
 
-df = 
+thread_json = jsonlite::read_json("data/covid-thread.json")
+
+thread_df = 
   json %>% 
   pluck(., "messages") %>%
   enframe() %>% 
@@ -48,12 +45,58 @@ df =
     date = as_date(datetime)
   )
 
+# Covd vs Chat
+# ____________________
 
-# df %>% 
-#   select(-timestamp) %>%
-#   write_csv("hoops-only-logs.csv")
+cases_vs_messages =
+  covid %>%
+  select(date, cCases = confirmed) %>%
+  mutate(cases = cCases - lag(cCases,1) %>% coalesce(cCases)) %>%
+  left_join(
+    thread_df %>%
+      group_by(date) %>%
+      summarise(
+        messages = n(), .groups = "drop"
+      )
+  ) %>%
+  mutate(
+    messages = messages %>% coalesce(0),
+    cMessages = cumsum(messages)
+  )
 
-# Graphs
+hchart(cases_vs_messages, "area", hcaes(x = date, y = messages), name = "'Coronavirus Only' Posts", showInLegend = TRUE) %>%
+  hc_yAxis_multiples(
+    list(title = list(text = "Corona Virus Only")),                    
+    list(title = list(text = "Australian Covid Cases"), opposite = TRUE) 
+  ) %>%
+  hc_add_series(cases_vs_messages, "area",hcaes(x = date, y = cases),  name = "Covid Cases", yAxis = 1, showInLegend = TRUE) %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
+  hc_title(text = "Covid vs Covid Chat") %>%
+  hc_legend(enabled = TRUE, verticalAlign = "bottom", align = "center")
+
+
+
+covid_vs_cases_months =
+  covid %>%
+  select(date, cCases = confirmed) %>%
+  mutate(cases = cCases - lag(cCases,1) %>% coalesce(cCases)) %>%
+  group_by(month = floor_date(date, unit = "month")) %>%
+  summarise(across(cases, sum)) %>%
+  left_join(
+    thread_df %>%
+      group_by(month = floor_date(date, unit = "month")) %>%
+      summarise(
+        messages = n(), .groups = "drop"
+      )
+  ) %>%
+  mutate(
+    messages = messages %>% coalesce(0)
+  )
+
+hchart(covid_vs_cases_months, "scatter", hcaes(y = cases, x = messages)) %>%
+  hc_add_theme(hc_theme_tmbish())
+
+# Misc Graphs
 # ____________________
 
 df %>%
