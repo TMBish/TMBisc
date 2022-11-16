@@ -100,4 +100,4 @@ get_b2b_teams(schedDF, .date = today() + days(1))
 get_b2b_teams(schedDF, .date = today() + days(2))
 
 # Team games this week
-order_teams_by_game_number(schedDF, .start_date = today() - days(1), .end_date = as_date("2019-12-08"))
+order_teams_by_game_number(schedDF, .start_date = today() - days(1), .end_date = as_date("2022-10-27"))
