@@ -15,6 +15,44 @@ gamelogs = game_logs(seasons = 1990:2023)
 
 
 gamelogs %>%
+  filter(minutes > 20) %>%
+  mutate(
+    triple_double = case_when(
+      pts >= 10 & treb >= 10 & ast >= 10 ~ 1,
+      TRUE ~ 0
+    ),
+    kash_triple_double = case_when(
+      pts >= 12 & treb >= 12 & ast >= 12 ~ 1,
+      TRUE ~ 0
+    )
+  ) %>%
+  group_by(slugSeason) %>%
+  summarise(
+    n = n(),
+    across(c(triple_double, kash_triple_double), sum)
+  ) %>%
+  mutate(
+    triple_doubles_per_1000_games = (triple_double / n) * 1000,
+    kash_triple_doubles_per_1000_games = (kash_triple_double / n) * 1000,
+  ) %>%
+  select(slugSeason, matches("triple_doubles")) %>%
+  pivot_longer(-slugSeason) %>%
+  hchart("line", hcaes(x = slugSeason, y = value, group = name)) %>%
+  hc_add_theme(hc_theme_tmbish()) %>%
+  hc_legend(verticalAlign = "bottom", align = "center") %>%
+  hc_yAxis(
+    title = list(text = ""),
+    plotLines = list(
+      list(value = 2, label = list(text="2 per 1000 games"))
+    )
+  ) %>%
+  hc_title(text = "Inflation Adjusted Triple Doubles")
+
+
+
+
+
+gamelogs %>%
   filter(minutes > 0) %>%
   select(nameTeam, namePlayer, minutes) %>%
   inner_join(player_profiles %>% select(namePlayer, heightInches)) %>%

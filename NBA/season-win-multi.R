@@ -19,12 +19,29 @@ bets = tribble(
 
 # Record ------------------------------------------------------------------
 
-standings %>% 
-  select(slugSeason, nameTeam, pctWinTeam) %>%
+win_rates = 
+  standings %>% 
+  mutate(pctSeasonComplete = (wins+losses) / 82) %>%
+  select(slugSeason, nameTeam, pctWinTeam, wins, pctSeasonComplete) %>%
   mutate(projectedWins = pctWinTeam * 82) %>%
-  select(-pctWinTeam) %>%
+  mutate(gamesRemaining = (1-pctSeasonComplete) * 82) %>%
   inner_join(bets)
 
+win_rates
   
   
+# Cash out value ------------------------------------------------------------------
+
+pbinom(q = 26, size = 42, p = 0.667)
+
+
+win_rates %>%
+  rowwise() %>%
+  mutate(
+    price = case_when(
+      ou == "over" ~ 1/(1-pbinom(q = (line-wins), size = gamesRemaining, prob = pctWinTeam)),
+      TRUE ~ 1/(pbinom(q = (line-wins), size = gamesRemaining, prob = pctWinTeam))
+    ) %>% round(2)
+  ) %>%
+  select(nameTeam, projectedWins, line, ou, gamesRemaining, bishLivePrice = price)
   
