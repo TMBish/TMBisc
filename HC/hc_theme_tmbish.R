@@ -15,7 +15,8 @@ hc_theme_tmbish = function() {
           fontFamily = base_font
         )
       ),
-      colors = list("#F24333", "#2EC4B6", "#F9DB6D", "#083D77", "#8D3B72", "#004FFF"),
+      colors = list("#e76f51", "#f4a261", "#e9c46a", "#2a9d8f", "#264653", "#219ebc", "#8ecae6", "#ff70a6"),
+      #list("#F24333", "#2EC4B6", "#F9DB6D", "#083D77", "#8D3B72", "#004FFF", "#fb8500"),
       title = list(
         style = list(fontFamily = header_font, fontWeight = "bold", color = "#011627", fontSize = "1.5em"),
         align = "left"
